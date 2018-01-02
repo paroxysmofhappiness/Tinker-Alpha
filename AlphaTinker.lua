@@ -488,7 +488,7 @@ function Tinker.InitAbility(name)
 		end
 	end
 	
-	if (Tinker.LastCDAB ~= nil and Ability.IsReady(Tinker.LastCDAB)) or not Entity.IsAbility(Tinker.LastCDAB) then
+	if not Entity.IsAbility(Tinker.LastCDAB) or (Tinker.LastCDAB ~= nil and Ability.IsReady(Tinker.LastCDAB))  then
 		Tinker.RearmCast	= false
 		Tinker.LastCDAB		= nil
 	end
