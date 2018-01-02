@@ -668,7 +668,7 @@ end
 
 function Tinker.OnDraw()
 	if not Menu.IsEnabled(Tinker.DMGCalculator) then return true end
-	if Tinker.Hero == nil then return end
+	if Tinker.Hero == nil or Heroes.GetLocal() == nil then return end
 	if NPC.GetUnitName(Tinker.Hero) ~= "npc_dota_hero_tinker" then return end
 	CalculateTotalDMG()
 	if Tinker.TotalDamage == 0 then return end
