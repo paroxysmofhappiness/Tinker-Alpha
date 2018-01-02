@@ -598,7 +598,6 @@ end
 
 function Tinker.OnDraw()
 	if not Menu.IsEnabled(Tinker.DMGCalculator) then return true end
-	if not Engine.IsInGame() then Tinker.Hero = nil return end
 	if Tinker.Hero == nil then return end
 	if NPC.GetUnitName(Tinker.Hero) ~= "npc_dota_hero_tinker" then return end
 	CalculateTotalDMG()
@@ -729,13 +728,13 @@ function CalculateTotalDMG()
 	local laser = NPC.GetAbilityByIndex(Tinker.Hero, 0)
     local rocket = NPC.GetAbilityByIndex(Tinker.Hero, 1)
     local rearm = NPC.GetAbility(Tinker.Hero, 'tinker_rearm')
-	local uniqLaserBonus = NPC.GetAbilityByIndex(Tinker.Hero, 11)	
-	local uniqDamageBonus = NPC.GetAbilityByIndex(Tinker.Hero, 7)	
+	local uniqLaserBonus = NPC.GetAbilityByIndex(Tinker.Hero, 12)	
+	local uniqDamageBonus = NPC.GetAbilityByIndex(Tinker.Hero, 6)	
 		
-	xfactor = xfactor + ((Hero.GetIntellectTotal(Tinker.Hero) / 16) / 100)
+	xfactor = xfactor + Hero.GetIntellectTotal(Tinker.Hero) / 100 * 0.066891
 	
 	if Ability.GetLevel(uniqDamageBonus) == 1 then
-		xfactor = xfactor + 0.04
+		xfactor = xfactor + 0.06
 	end
 	
 	Tinker.TotalMagicFactor = xfactor
@@ -747,9 +746,10 @@ function CalculateTotalDMG()
 		Tinker.TotalManaCost = Tinker.TotalManaCost + Ability.GetManaCost(tempVeil)
 	end
 	
-	if NPC.GetItem(Tinker.Hero, "item_aether_lens", true)
+	if NPC.GetItem(Tinker.Hero, "item_kaya", true)
 	then 
-		Tinker.TotalMagicFactor = Tinker.TotalMagicFactor + 0.05 
+		Tinker.TotalMagicFactor = Tinker.TotalMagicFactor + 0.10
+		xfactor = xfactor + 0.10
 	end
 	
 	
@@ -782,13 +782,13 @@ function CalculateTotalDMG()
 		Tinker.TotalPureDamage = Tinker.TotalPureDamage + 100
 	end
 
-	if Ability.GetLevel(rocket) > 0 then Tinker.TotalMagicDamage = Tinker.TotalMagicDamage + Ability.GetDamage(rocket) end
+	if Ability.GetLevel(rocket) > 0 then Tinker.TotalMagicDamage = Tinker.TotalMagicDamage + Ability.GetLevelSpecialValueFor(rocket, "damage") end
 		
 	Tinker.TotalManaCost = Tinker.TotalManaCost + Ability.GetManaCost(laser)
 	Tinker.TotalManaCost = Tinker.TotalManaCost + Ability.GetManaCost(rocket)
 	Tinker.TotalManaCost = Tinker.TotalManaCost + Ability.GetManaCost(rearm)
 	
-	Tinker.TotalDamage = (Tinker.TotalMagicDamage * Tinker.TotalMagicFactor) + Tinker.TotalPureDamage
+	Tinker.TotalDamage = (Tinker.TotalMagicDamage * Tinker.TotalMagicFactor) + (Tinker.TotalPureDamage * xfactor)
 end
 
 return Tinker
