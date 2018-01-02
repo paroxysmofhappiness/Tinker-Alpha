@@ -3,6 +3,8 @@ Tinker.IsEnabled		= Menu.AddOption({ "Hero Specific","Tinker" }, "Enabled", "")
 Tinker.Version			= Menu.AddOption({ "Hero Specific","Tinker" }, "Version", "- Alpha", 1,1,1)
 Tinker.DMGCalculator	= Menu.AddOption({ "Hero Specific","Tinker", "Extra" }, "DMG Calculator", "", 1, 3)
 Tinker.KillIndicator	= Menu.AddOption({ "Hero Specific","Tinker", "Extra" }, "Kill Indicator", "")
+Tinker.RocketIndicator	= Menu.AddOption({ "Hero Specific","Tinker", "Extra" }, "Rocket indicator", "Draws particle for current targets")
+
 Tinker.FailRockets		= Menu.AddOption({ "Hero Specific","Tinker", "Extra", "Fail Switch" }, "Fail Rockets", "")
 Tinker.FailRearm		= Menu.AddOption({ "Hero Specific","Tinker", "Extra", "Fail Switch" }, "Fail Rearm", "")
 
@@ -232,6 +234,10 @@ function Tinker.OnUpdate()
 	for k, v in pairs(Tinker.CastTypes) do
 		Tinker.InitAbility(k)
 	end
+
+	if Menu.IsEnabled(Tinker.RocketIndicator) then	
+		Tinker.Indicate()
+	end 
 	
 	for i = 1, Tinker.OrdersCount do
 		if Menu.IsKeyDown(Tinker.Orders[i][200])  and Menu.IsEnabled(Tinker.Orders[i][100]) and not Input.IsInputCaptured() then
@@ -252,6 +258,67 @@ function Tinker.OnUpdate()
 	if Menu.IsEnabled(Tinker.KillSteal) then
 		Tinker.StealCheck()
 	end
+end
+
+Tinker.RocketTargers = {}
+function compare(a,b)
+  return a[3] < b[3]
+end
+
+function Tinker.Indicate()
+	if not Tinker.Abilitys['tinker_heat_seeking_missile'] then return end
+	local targets	= 2
+	if	NPC.GetItem(Tinker.Hero, "item_ultimate_scepter", true) ~= nil then
+		targets		= 4
+	end
+	for k, v in pairs(Heroes.GetAll()) do
+		if not Entity.IsSameTeam(Tinker.Hero, v) then
+			if	NPC.IsEntityInRange(Tinker.Hero, v, Ability.GetCastRange(Tinker.Abilitys['tinker_heat_seeking_missile']))
+				and Entity.IsAlive(v)
+				and not Entity.IsDormant(v)
+			then
+				local d = Entity.GetAbsOrigin(v):Distance(Entity.GetAbsOrigin(Tinker.Hero)):Length2D()
+				if Tinker.RocketTargers[NPC.GetUnitName(v)] == nil then
+					local t = {}
+					t.hero = v
+					t.particle = nil
+					t.dis = d
+					Tinker.RocketTargers[NPC.GetUnitName(v)] = t
+				else
+					Tinker.RocketTargers[NPC.GetUnitName(v)].dis = d
+				end
+			else
+				if Tinker.RocketTargers[NPC.GetUnitName(v)] ~= nil then
+					if Tinker.RocketTargers[NPC.GetUnitName(v)].particle ~= nil then
+						Particle.Destroy(Tinker.RocketTargers[NPC.GetUnitName(v)].particle)
+						Tinker.RocketTargers[NPC.GetUnitName(v)].particle = nil
+					end
+				end
+			end
+		end
+	end
+	
+	local sortedKeys = getKeysSortedByValue(Tinker.RocketTargers, function(a, b) return a.dis < b.dis end)
+
+	if Length(Tinker.RocketTargers) > 2 then
+		local ta = Tinker.RocketTargers
+		local i = 0
+		Tinker.RocketTargers = {}
+		for k, v in pairs(sortedKeys) do
+			if i < targets
+			then
+				Tinker.RocketTargers[v] = ta[v]
+				i = i + 1
+			else
+				if ta[v].particle ~= nil then
+					Particle.Destroy(ta[v].particle)
+				end
+			end
+		end
+		
+		
+	end
+
 end
 
 function Tinker.OnGameStart()
@@ -602,6 +669,8 @@ function Tinker.StealCheck()
 	end
 end
 
+Tinker.Particles = {}
+
 function Tinker.OnDraw()
 	if not Menu.IsEnabled(Tinker.DMGCalculator) then return true end
 	if Tinker.Hero == nil then return end
@@ -647,6 +716,17 @@ function Tinker.OnDraw()
 		end
 	end
 	
+	if Menu.IsEnabled(Tinker.RocketIndicator) then
+		for k, v in pairs(Tinker.RocketTargers) do
+			if v.particle == nil then
+				v.particle =	Particle.Create("particles/ui_mouseactions/range_finder_tower_aoe.vpcf", Enum.ParticleAttachment.PATTACH_INVALID, v.hero)
+			end
+				
+			Particle.SetControlPoint(v.particle, 2, Entity.GetOrigin(Tinker.Hero))
+			Particle.SetControlPoint(v.particle, 6, Vector(1, 0, 0))
+			Particle.SetControlPoint(v.particle, 7, Entity.GetOrigin(v.hero))
+		end
+	end
 end
 
 function Tinker.OnPrepareUnitOrders(orders)
