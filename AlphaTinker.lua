@@ -57,6 +57,7 @@ Tinker.CastTypes	= {
 	["item_rod_of_atos"]				= 2,
 	["item_cyclone"]					= 2,
 	["item_dagon"]						= 2,
+	["item_nullifier"]					= 2,
 	["item_travel_boots"]				= 3,
 	["item_lotus_orb"]					= 2,
 	["item_sheepstick"]					= 2,
@@ -98,7 +99,8 @@ Tinker.CastPosition[23]		=  "Rockets"
 Tinker.CastPosition[24]		=  "March"
 Tinker.CastPosition[25]		=  "Rearm"
 Tinker.CastPosition[26]		=  "Safe Blink"
-Tinker.CastPositionLength	=  26
+Tinker.CastPosition[27]		=  "Nullifier"
+Tinker.CastPositionLength	=  27
 
 Tinker.Orders				=  {}
 
@@ -301,6 +303,7 @@ Tinker.CastPosition[23]			=  "tinker_heat_seeking_missile"
 Tinker.CastPosition[24]			=  "tinker_march_of_the_machines"
 Tinker.CastPosition[25]			=  "tinker_rearm"
 Tinker.CastPosition[26]			=  "item_blink"
+Tinker.CastPosition[27]			=  "item_nullifier"
 
 function Tinker.PreComboWombo(order)
 	if Tinker.CastList[order] == nil then Tinker.CastList[order] = {} end
@@ -427,25 +430,25 @@ function Tinker.ComboCast(cast)
 		Tinker.Cast('item_solar_crest', Tinker.Hero, Tinker.NearestEnemyHero, nil, Tinker.ManaPoint)
 	return end
 
-	if cast == (Tinker.CastPositionLength - 4) then 
+	if cast == (Tinker.CastPositionLength - 5) then 
 		Tinker.Cast('tinker_laser', Tinker.Hero, Tinker.NearestEnemyHero, nil, Tinker.ManaPoint)
 	return end
 	
-	if cast == (Tinker.CastPositionLength - 3) then 
+	if cast == (Tinker.CastPositionLength - 4) then 
 		Tinker.Cast('tinker_heat_seeking_missile', Tinker.Hero, Tinker.NearestEnemyHero, nil, Tinker.ManaPoint)
 	return end
 	
-	if cast == (Tinker.CastPositionLength - 2) then 
+	if cast == (Tinker.CastPositionLength - 3) then 
 		Tinker.Cast('tinker_march_of_the_machines', Tinker.Hero, Tinker.NearestEnemyHero, NPC.GetAbsOrigin(Tinker.Hero), Tinker.ManaPoint)
 	return end
 	
-	if cast == (Tinker.CastPositionLength - 1) then
+	if cast == (Tinker.CastPositionLength - 2) then
 		if Tinker.LastCDAB ~= nil then
 			Tinker.Cast('tinker_rearm', Tinker.Hero, Tinker.NearestEnemyHero, nil, Tinker.ManaPoint)
 		end
 	return end
 
-	if cast == Tinker.CastPositionLength then 
+	if cast == (Tinker.CastPositionLength - 1) then 
 		local t = false
 		for k, v in pairs(Tinker.SafePos) do 
 			if	Input.GetWorldCursorPos():Distance(v):Length() < 1200
@@ -459,7 +462,10 @@ function Tinker.ComboCast(cast)
 			Tinker.Cast('item_blink', Tinker.Hero, Tinker.NearestEnemyHero, Input.GetWorldCursorPos(), Tinker.ManaPoint)
 		end
 	return end
-
+	
+	if cast == Tinker.CastPositionLength then 
+		Tinker.Cast('item_nullifier', Tinker.Hero, Tinker.NearestEnemyHero, nil, Tinker.ManaPoint)
+	return end
 end
 
 function Tinker.InitAbility(name)
