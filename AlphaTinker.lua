@@ -44,6 +44,7 @@ Tinker.TotalDamage			= 0
 Tinker.Fountain				= nil
 Tinker.OrdersCount			= 10
 Tinker.SpellCount			= 15
+Tinker.RocketTargers		= {}
 
 Tinker.CastTypes	= {
 	["item_blink"]						= 3,
@@ -260,11 +261,6 @@ function Tinker.OnUpdate()
 	end
 end
 
-Tinker.RocketTargers = {}
-function compare(a,b)
-  return a[3] < b[3]
-end
-
 function Tinker.Indicate()
 	if not Tinker.Abilitys['tinker_heat_seeking_missile'] then return end
 	local targets	= 2
@@ -340,6 +336,7 @@ function Tinker.OnGameStart()
 	Tinker.TotalDamage			= 0
 	Tinker.Fountain				= nil
 	Tinker.CastList				= {}
+	Tinker.RocketTargers		= {}
 end
 
 Tinker.CastList					= {}
@@ -668,8 +665,6 @@ function Tinker.StealCheck()
 		end
 	end
 end
-
-Tinker.Particles = {}
 
 function Tinker.OnDraw()
 	if not Menu.IsEnabled(Tinker.DMGCalculator) then return true end
