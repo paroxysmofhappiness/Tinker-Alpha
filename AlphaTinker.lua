@@ -211,8 +211,8 @@ function Tinker.OnUpdate()
 	Tinker.Enabled = false
 	
 	if not Menu.IsEnabled(Tinker.IsEnabled) then return end
-	if Tinker.Hero == nil then Tinker.Hero = Heroes.GetLocal() end
-	
+	if Tinker.Hero == nil or not Entity.IsNPC(Tinker.Hero) then Tinker.Hero = Heroes.GetLocal() end
+	if not Entity.IsNPC(Tinker.Hero) then return end
 	if	NPC.GetUnitName(Tinker.Hero) ~= "npc_dota_hero_tinker"
 		or	NPC.HasModifier(Tinker.Hero, "modifier_teleporting")
 		or	not Entity.IsAlive(Tinker.Hero) 
@@ -668,7 +668,7 @@ end
 
 function Tinker.OnDraw()
 	if not Menu.IsEnabled(Tinker.DMGCalculator) then return true end
-	if Tinker.Hero == nil or Heroes.GetLocal() == nil then return end
+	if Tinker.Hero == nil or not Entity.IsNPC(Tinker.Hero) then return end
 	if NPC.GetUnitName(Tinker.Hero) ~= "npc_dota_hero_tinker" then return end
 	CalculateTotalDMG()
 	if Tinker.TotalDamage == 0 then return end
