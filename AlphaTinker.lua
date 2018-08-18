@@ -764,7 +764,6 @@ function Tinker.OnPrepareUnitOrders(orders)
 	if not Tinker.Enabled then return true end
 	
 	if	Entity.IsAbility(orders.ability)
-		and Entity.IsAbility(orders.ability) 
 	then
 		if orders.order == Enum.UnitOrder.DOTA_UNIT_ORDER_CAST_NO_TARGET then
 			if Menu.IsEnabled(Tinker.FailRockets) then
