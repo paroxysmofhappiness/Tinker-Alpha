@@ -761,9 +761,9 @@ function Tinker.OnDraw()
 end
 
 function Tinker.OnPrepareUnitOrders(orders)
-	if not Tinker.Enabled or orders == nil then return true end
+	if not Tinker.Enabled then return true end
 	
-	if	orders.ability ~= nil 
+	if	Entity.IsAbility(orders.ability)
 		and Entity.IsAbility(orders.ability) 
 	then
 		if orders.order == Enum.UnitOrder.DOTA_UNIT_ORDER_CAST_NO_TARGET then
@@ -816,7 +816,7 @@ function Tinker.OnPrepareUnitOrders(orders)
 				end
 			end
 			
-			if Menu.IsEnabled(Tinker.ExtraBottleAly) and Ability.GetName(orders.ability) == 'item_travel_boots' then
+			if Menu.IsEnabled(Tinker.ExtraBottleAly) and Ability.GetName(orders.ability) == 'item_travel_boots' and Tinker.Abilitys['item_bottle'] ~= nil then
 				local once = true
 				for k, v in pairs(Heroes.InRadius(Entity.GetAbsOrigin(Tinker.Hero), Ability.GetCastRange(Tinker.Abilitys['item_bottle']), Enum.TeamType.TEAM_FRIEND, Enum.TeamType.TEAM_FRIEND)) do
 					if once and v ~= Tinker.Hero and (Entity.GetHealth(v) < Entity.GetMaxHealth(v) or NPC.GetMana(v) < NPC.GetMaxMana(v)) then
