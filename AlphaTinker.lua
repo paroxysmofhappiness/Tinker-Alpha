@@ -1,6 +1,6 @@
 local Tinker = {}
 Tinker.IsEnabled		= Menu.AddOption({ "Hero Specific","Tinker" }, "Enabled", "")
-Tinker.Version			= Menu.AddOption({ "Hero Specific","Tinker" }, "Version", "- Alpha", 1,1,1)
+Tinker.Version			= Menu.AddOption({ "Hero Specific","Tinker" }, "Version - Alpha", "", 1,1,1)
 Tinker.DMGCalculator	= Menu.AddOption({ "Hero Specific","Tinker", "Extra" }, "DMG Calculator", "", 1, 3)
 Tinker.KillIndicator	= Menu.AddOption({ "Hero Specific","Tinker", "Extra" }, "Kill Indicator", "")
 Tinker.RocketIndicator	= Menu.AddOption({ "Hero Specific","Tinker", "Extra" }, "Rocket indicator", "Draws particle for current targets")
@@ -8,20 +8,28 @@ Tinker.RocketIndicator	= Menu.AddOption({ "Hero Specific","Tinker", "Extra" }, "
 Tinker.FailRockets		= Menu.AddOption({ "Hero Specific","Tinker", "Extra", "Fail Switch" }, "Fail Rockets", "")
 Tinker.FailRearm		= Menu.AddOption({ "Hero Specific","Tinker", "Extra", "Fail Switch" }, "Fail Rearm", "")
 
-Tinker.ExtraSoul		= Menu.AddOption({ "Hero Specific","Tinker", "Extra", "Items" }, "Soul Ring", "Cast Soul Ring before each ability")
-Tinker.ExtraSoulT		= Menu.AddOption({ "Hero Specific","Tinker", "Extra", "Items" }, "Soul Ring Threshold", "", 150, 500, 50)
-Tinker.ExtraSoulCombo	= Menu.AddOption({ "Hero Specific","Tinker", "Extra", "Items" }, "Soul Ring in any combo", "")
-Tinker.ExtraGhostCombo	= Menu.AddOption({ "Hero Specific","Tinker", "Extra", "Items" }, "Ghost scepter in any combo", "")
-Tinker.ExtraBottle		= Menu.AddOption({ "Hero Specific","Tinker", "Extra", "Items" }, "Bottle", "Drink bottle on yourself before each ability")
-Tinker.ExtraBottleT		= Menu.AddOption({ "Hero Specific","Tinker", "Extra", "Items" }, "Bottle in any combo", "")
-Tinker.ExtraBottleAly	= Menu.AddOption({ "Hero Specific","Tinker", "Extra", "Items" }, "Bottle for aly before TP", "")
-Tinker.ExtraBottleFnt	= Menu.AddOption({ "Hero Specific","Tinker", "Extra", "Items" }, "Bottle self/aly on fountain", "")
+Tinker.FullCastE		= Menu.AddOption({ "Hero Specific","Tinker", "Prepared combos", "Full cast" }, "Enabled", "")
+Tinker.FullCastK		= Menu.AddKeyOption({ "Hero Specific","Tinker", "Prepared combos", "Full cast" }, "Combo key", Enum.ButtonCode.KEY_F)
+
+Tinker.ExtraSoul		= Menu.AddOption({ "Hero Specific","Tinker", "Extra", "Items", "Soul Ring" }, "Soul Ring", "Cast Soul Ring before each ability")
+Tinker.ExtraSoulT		= Menu.AddOption({ "Hero Specific","Tinker", "Extra", "Items", "Soul Ring" }, "Soul Ring Threshold", "", 150, 800, 50)
+Tinker.ExtraSoulCombo	= Menu.AddOption({ "Hero Specific","Tinker", "Extra", "Items", "Soul Ring" }, "Soul Ring in any combo", "")
+Tinker.ExtraBottle		= Menu.AddOption({ "Hero Specific","Tinker", "Extra", "Items", "Bottle" }, "Bottle", "Drink bottle on yourself before each ability")
+Tinker.ExtraBottleT		= Menu.AddOption({ "Hero Specific","Tinker", "Extra", "Items", "Bottle" }, "Bottle in any combo", "")
+Tinker.ExtraBottleAly	= Menu.AddOption({ "Hero Specific","Tinker", "Extra", "Items", "Bottle" }, "Bottle for aly before TP", "")
+Tinker.ExtraBottleFnt	= Menu.AddOption({ "Hero Specific","Tinker", "Extra", "Items", "Bottle" }, "Bottle self/aly on fountain", "")
+Tinker.ExtraBottleThr	= Menu.AddOption({ "Hero Specific","Tinker", "Extra", "Items", "Bottle" }, "Bottle Threshold", "Will only use Bootle when MP or HP is less then (%)", 10, 100, 2) --+
+Tinker.ExtraGhostCombo	= Menu.AddOption({ "Hero Specific","Tinker", "Extra", "Items", "Ghost scepter" }, "Ghost scepter in any combo", "") --+
+Tinker.ExtraGhostRearm	= Menu.AddOption({ "Hero Specific","Tinker", "Extra", "Items", "Ghost scepter" }, "Ghost scepter before ream", "") --+
+Tinker.ExtraGCCombo		= Menu.AddOption({ "Hero Specific","Tinker", "Extra", "Items", "Glimmer Cape" }, "Glimmer Cape in any combo", "") --+
+Tinker.ExtraGCTHCombo	= Menu.AddOption({ "Hero Specific","Tinker", "Extra", "Items", "Glimmer Cape" }, "Glimmer Cape MP Threshold", "", 150, 800, 50) --+
+Tinker.ExtraGCBRCombo	= Menu.AddOption({ "Hero Specific","Tinker", "Extra", "Items", "Glimmer Cape" }, "Glimmer Cape before ream", "") --+
 
 Tinker.FailRearmAI		= Menu.AddOption({ "Hero Specific","Tinker", "Extra", "Fail Switch" }, "Fail Rearm - check abilities / items", "")
 Tinker.KillSteal		= Menu.AddOption({ "Hero Specific","Tinker", "Extra" }, "Steal Kill by Spells", "")
-Tinker.CastRange		= Menu.AddOption({ "Hero Specific","Tinker", "Orders", "Common" }, "Nearest to mouse", "", 50, 2000, 50)
+Tinker.CastRange		= Menu.AddOption({ "Hero Specific","Tinker", "Globals" }, "Nearest to mouse", "", 50, 2000, 50)
 
-Menu.SetValueName(Tinker.Version, 1, "4.6 Alpha")
+Menu.SetValueName(Tinker.Version, 1, "4.7")
 Menu.SetValueName(Tinker.DMGCalculator, 1, "Off")
 Menu.SetValueName(Tinker.DMGCalculator, 2, "Enabled - Bar")
 Menu.SetValueName(Tinker.DMGCalculator, 3, "Enabled - Mouse")
@@ -49,12 +57,14 @@ Tinker.Fountain				= nil
 Tinker.OrdersCount			= 10
 Tinker.SpellCount			= 15
 Tinker.RocketTargers		= {}
+Tinker.CanCastABS			= {}
 
 Tinker.CastTypes	= {
 	["item_blink"]						= 3,
 	["item_veil_of_discord"]			= 3,
 	["item_soul_ring"]					= 1,
 	["item_bottle"]						= 1,
+	["item_glimmer_cape"]				= 2,
 	["item_ghost"]						= 1,
 	["item_shivas_guard"]				= 1,
 	["item_orchid"]						= 2,
@@ -195,15 +205,15 @@ for i = 1, Tinker.OrdersCount do
 	Tinker.Orders[i] = {}
 	local temp = i
 	if i < 10 then temp = "0" .. i end
-	Tinker.Orders[i][100] = Menu.AddOption({ "Hero Specific","Tinker", "Orders", "Order #" .. temp }, temp .. ". Enabled", "" )
-	Tinker.Orders[i][200] = Menu.AddKeyOption({ "Hero Specific","Tinker", "Orders", "Order #" .. temp }, temp .. ". Key", Enum.ButtonCode.KEY_PAD_0 )
-	Tinker.Orders[i][300] = Menu.AddOption({ "Hero Specific","Tinker", "Orders", "Order #" .. temp }, temp .. ". Reset", "", 1, 10, 1)
-	Tinker.Orders[i][400] = Menu.AddOption({ "Hero Specific","Tinker", "Orders", "Order #" .. temp }, temp .. ". MP Threshold", "", 0, 2000, 100)
+	Tinker.Orders[i][100] = Menu.AddOption({ "Hero Specific","Tinker", "My combos", "Order #" .. temp }, temp .. ". Enabled", "" )
+	Tinker.Orders[i][200] = Menu.AddKeyOption({ "Hero Specific","Tinker", "My combos", "Order #" .. temp }, temp .. ". Key", Enum.ButtonCode.KEY_PAD_0 )
+	Tinker.Orders[i][300] = Menu.AddOption({ "Hero Specific","Tinker", "My combos", "Order #" .. temp }, temp .. ". Reset", "", 1, 10, 1)
+	Tinker.Orders[i][400] = Menu.AddOption({ "Hero Specific","Tinker", "My combos", "Order #" .. temp }, temp .. ". MP Threshold", "", 0, 2000, 100)
 
 	for l = 1, Tinker.SpellCount do	
 		local stemp = ""
 		if l < 10 then stemp = "0" end
-		Tinker.Orders[i][l] =  Menu.AddOption({ "Hero Specific","Tinker", "Orders", "Order #" .. temp }, temp .. ". Spell cast #" .. stemp .. l, list, 1, Tinker.CastPositionLength )
+		Tinker.Orders[i][l] =  Menu.AddOption({ "Hero Specific","Tinker", "My combos", "Order #" .. temp }, temp .. ". Spell cast #" .. stemp .. l, list, 1, Tinker.CastPositionLength )
 		for k, v in pairs(Tinker.CastPosition) do
 			Menu.SetValueName(Tinker.Orders[i][l], k, v)
 		end
@@ -234,6 +244,10 @@ function Tinker.OnUpdate()
 				return end
 			end
 		end
+	end
+	
+	if Menu.IsEnabled(Tinker.FullCastE) and Menu.IsKeyDown(Tinker.FullCastK) then
+		Tinker.CastFullCombo()
 	end
 	
 	for k, v in pairs(Tinker.CastTypes) do
@@ -269,12 +283,13 @@ function Tinker.OnUpdate()
 		and not NPC.IsChannellingAbility(Tinker.Hero)
 		and not NPC.IsAttacking(Tinker.Hero)
 		and not NPC.IsStunned(Tinker.Hero)
+		and not Tinker.RearmCast
 		and NPC.HasModifier(Tinker.Hero, 'modifier_fountain_aura_buff')
 		and Tinker.Abilitys['item_bottle'] ~= nil
 		and Ability.IsCastable(Tinker.Abilitys['item_bottle'], Tinker.ManaPoint)
 	then
-		for k, v in pairs(Heroes.InRadius(Entity.GetAbsOrigin(Tinker.Hero), Ability.GetCastRange(Tinker.Abilitys['item_bottle']), Enum.TeamType.TEAM_FRIEND, Enum.TeamType.TEAM_FRIEND)) do
-			if (Entity.GetHealth(v) < Entity.GetMaxHealth(v) or NPC.GetMana(v) < NPC.GetMaxMana(v)) and not NPC.HasModifier(v, "modifier_bottle_regeneration") then
+		for k, v in pairs(Heroes.InRadius(Entity.GetAbsOrigin(Tinker.Hero), Ability.GetCastRange(Tinker.Abilitys['item_bottle']))) do
+			if Entity.IsSameTeam(Tinker.Hero, v) and (Entity.GetHealth(v) < Entity.GetMaxHealth(v) or NPC.GetMana(v) < NPC.GetMaxMana(v)) and not NPC.HasModifier(v, "modifier_bottle_regeneration") then
 				Ability.CastTarget(Tinker.Abilitys['item_bottle'], v)
 			end
 		end
@@ -357,6 +372,7 @@ function Tinker.OnGameStart()
 	Tinker.Fountain				= nil
 	Tinker.CastList				= {}
 	Tinker.RocketTargers		= {}
+	Tinker.CanCastABS			= {}
 end
 
 Tinker.CastList					= {}
@@ -388,6 +404,109 @@ Tinker.CastPosition[24]			=  "tinker_march_of_the_machines"
 Tinker.CastPosition[25]			=  "tinker_rearm"
 Tinker.CastPosition[26]			=  "item_blink"
 Tinker.CastPosition[27]			=  "item_nullifier"
+
+
+Tinker.CMB_LIST_FULLCAST		=  {}
+Tinker.CMB_LIST_FULLCAST[1]		=  "item_blink"
+Tinker.CMB_LIST_FULLCAST[2]		=  "item_sheepstick"
+Tinker.CMB_LIST_FULLCAST[3]		=  "tinker_laser"
+Tinker.CMB_LIST_FULLCAST[4]		=  "item_veil_of_discord"
+Tinker.CMB_LIST_FULLCAST[5]		=  "item_ethereal_blade"
+Tinker.CMB_LIST_FULLCAST[6]		=  "item_orchid"
+Tinker.CMB_LIST_FULLCAST[7]		=  "item_bloodthorn"
+Tinker.CMB_LIST_FULLCAST[8]		=  "item_rod_of_atos"
+Tinker.CMB_LIST_FULLCAST[9]		=  "item_solar_crest"
+Tinker.CMB_LIST_FULLCAST[10]	=  "item_dagon"
+Tinker.CMB_LIST_FULLCAST[11]	=  "item_nullifier"
+Tinker.CMB_LIST_FULLCAST[12]	=  "item_shivas_guard"
+Tinker.CMB_LIST_FULLCAST[13]	=  "item_medallion_of_courage"
+Tinker.CMB_LIST_FULLCAST[14]	=  "tinker_heat_seeking_missile"
+Tinker.CMB_LIST_FULLCAST[15]	=  "item_cyclone"
+Tinker.CMB_LIST_FULLCAST[16]	=  "tinker_rearm"
+
+function Tinker.CastExtraBeforeCombo()
+	if Menu.IsEnabled(Tinker.ExtraSoulCombo) then
+		if	NPC.GetItem(Tinker.Hero, "item_soul_ring", true) ~= nil 
+			and Entity.GetHealth(Tinker.Hero) > Menu.GetValue(Tinker.ExtraSoulT)
+		then
+			Tinker.Cast('item_soul_ring', Tinker.Hero, Tinker.NearestEnemyHero, nil, Tinker.ManaPoint)
+		end
+	end
+
+	if Menu.IsEnabled(Tinker.ExtraBottleT) then
+		if	NPC.GetItem(Tinker.Hero, "item_bottle", true) ~= nil 
+			and (Entity.GetHealth(Tinker.Hero) < ((Entity.GetMaxHealth(Tinker.Hero) / 100) * Menu.GetValue(Tinker.ExtraBottleThr)) or Tinker.ManaPoint <  ((NPC.GetMaxMana(Tinker.Hero) / 100) * Menu.GetValue(Tinker.ExtraBottleThr)))
+			and not NPC.HasModifier(Tinker.Hero, "modifier_bottle_regeneration")
+		then
+			Tinker.Cast('item_bottle', Tinker.Hero, Tinker.NearestEnemyHero, nil, Tinker.ManaPoint)
+		end
+	end
+	
+	if Menu.IsEnabled(Tinker.ExtraGhostCombo) then
+		if	NPC.GetItem(Tinker.Hero, "item_ghost", true) ~= nil 
+		then
+			Tinker.Cast('item_ghost', Tinker.Hero, Tinker.NearestEnemyHero, nil, Tinker.ManaPoint)
+		end
+	end
+	
+	if Menu.IsEnabled(Tinker.ExtraGCCombo) then
+		if	NPC.GetItem(Tinker.Hero, "item_glimmer_cape", true) ~= nil 
+			and Tinker.ManaPoint > Menu.GetValue(Tinker.ExtraGCTHCombo)
+		then
+			Tinker.Cast('item_glimmer_cape', Tinker.Hero, Tinker.Hero, nil, Tinker.ManaPoint)
+		end
+	end
+end
+
+function Tinker.CastFullCombo()
+	Tinker.SuccessNearest			=	false
+	Tinker.NearestEnemyHero			=	Input.GetNearestHeroToCursor(Entity.GetTeamNum(Tinker.Hero), Enum.TeamType.TEAM_ENEMY)
+	if	Tinker.NearestEnemyHero		~=	nil	then
+		Tinker.NearestEnemyHeroPos	=	Entity.GetAbsOrigin(Tinker.NearestEnemyHero)
+		Tinker.SuccessNearest		=	NPC.IsPositionInRange(Tinker.NearestEnemyHero, Input.GetWorldCursorPos(), Menu.GetValue(Tinker.CastRange), 0)
+	end
+	if Tinker.RearmCast then return end
+	
+	Tinker.CastExtraBeforeCombo()
+	
+	for i = 1, 16 do
+		local a = Tinker.Abilitys[Tinker.CMB_LIST_FULLCAST[i]]
+		if a ~= nil and Ability.IsCastable(a, Tinker.ManaPoint) then
+
+			if		(Tinker.CMB_LIST_FULLCAST[i] == 'item_cyclone' and NPC.HasModifier(Tinker.NearestEnemyHero, 'modifier_sheepstick_debuff'))
+				or	(Tinker.CMB_LIST_FULLCAST[i] == 'item_veil_of_discord' and NPC.HasModifier(Tinker.NearestEnemyHero, 'modifier_item_veil_of_discord_debuff'))
+			then
+				Tinker.CanCastABS[Tinker.CMB_LIST_FULLCAST[i]] = 0
+			else
+				if Tinker.CMB_LIST_FULLCAST[i] == 'tinker_rearm' then
+					if IsAllCasted() then
+						Tinker.CanCastABS = {}
+						Tinker.Cast(Tinker.CMB_LIST_FULLCAST[i], Tinker.Hero, Tinker.NearestEnemyHero, Input.GetWorldCursorPos(), Tinker.ManaPoint)
+					end
+				else 
+					Tinker.CanCastABS[Tinker.CMB_LIST_FULLCAST[i]] = Tinker.CMB_LIST_FULLCAST[i]
+					Tinker.Cast(Tinker.CMB_LIST_FULLCAST[i], Tinker.Hero, Tinker.NearestEnemyHero, Input.GetWorldCursorPos(), Tinker.ManaPoint)
+				end
+			end
+		end
+	end
+end
+
+function IsAllCasted()
+	local length = 0
+	local ttl = 0
+	for k, v in pairs(Tinker.CanCastABS) do
+		local a = Tinker.Abilitys[k]
+		if v ~= 0 and a ~= nil then
+			length = length + 1
+			if not Ability.IsReady(a) or not Ability.IsCastable(a, Tinker.ManaPoint) then
+				ttl = ttl + 1
+			end
+		end
+	end
+	
+	if ttl >= length then return true else return false end
+end
 
 function Tinker.PreComboWombo(order)
 	if Tinker.CastList[order] == nil then Tinker.CastList[order] = {} end
@@ -426,29 +545,7 @@ function Tinker.ComboCast(cast)
 		Tinker.SuccessNearest		=	NPC.IsPositionInRange(Tinker.NearestEnemyHero, Input.GetWorldCursorPos(), Menu.GetValue(Tinker.CastRange), 0)
 	end
 	
-	if Menu.IsEnabled(Tinker.ExtraSoulCombo) then
-		if	NPC.GetItem(Tinker.Hero, "item_soul_ring", true) ~= nil 
-			and Entity.GetHealth(Tinker.Hero) > Menu.GetValue(Tinker.ExtraSoulT)
-		then
-			Tinker.Cast('item_soul_ring', Tinker.Hero, Tinker.NearestEnemyHero, nil, Tinker.ManaPoint)
-		end
-	end
-	
-	if Menu.IsEnabled(Tinker.ExtraBottle) then
-		if	NPC.GetItem(Tinker.Hero, "item_bottle", true) ~= nil 
-			and (Entity.GetHealth(Tinker.Hero) < Entity.GetMaxHealth(Tinker.Hero) or Tinker.ManaPoint < NPC.GetMaxMana(Tinker.Hero))
-			and not NPC.HasModifier(Tinker.Hero, "modifier_bottle_regeneration")
-		then
-			Tinker.Cast('item_bottle', Tinker.Hero, Tinker.NearestEnemyHero, nil, Tinker.ManaPoint)
-		end
-	end
-	
-	if Menu.IsEnabled(Tinker.ExtraGhostCombo) then
-		if	NPC.GetItem(Tinker.Hero, "item_ghost", true) ~= nil 
-		then
-			Tinker.Cast('item_ghost', Tinker.Hero, Tinker.NearestEnemyHero, nil, Tinker.ManaPoint)
-		end
-	end
+	Tinker.CastExtraBeforeCombo()
 	
 	if cast == 2 then 
 		Tinker.Cast('item_ghost', Tinker.Hero, Tinker.NearestEnemyHero, nil, Tinker.ManaPoint)
@@ -626,7 +723,7 @@ function Tinker.Cast(name, self, npc, position, manapoint)
 	then
 		if casttype	== 1 then Ability.CastNoTarget(ability)
 			elseif casttype == 2 then 
-				if 	Tinker.SuccessNearest
+				if 	(Tinker.SuccessNearest or name == 'item_glimmer_cape')
 					and	not NPC.HasState(npc, Enum.ModifierState.MODIFIER_STATE_MAGIC_IMMUNE)
 					and NPC.IsEntityInRange(npc, self, Ability.GetCastRange(ability))
 				then
@@ -802,6 +899,21 @@ function Tinker.OnPrepareUnitOrders(orders)
 						
 						if not ret then return ret end
 					end
+					
+					if Menu.IsEnabled(Tinker.ExtraGhostRearm) then
+						if	NPC.GetItem(Tinker.Hero, "item_ghost", true) ~= nil 
+						then
+							Tinker.Cast('item_ghost', Tinker.Hero, Tinker.NearestEnemyHero, nil, Tinker.ManaPoint)
+						end
+					end
+					
+					if Menu.IsEnabled(Tinker.ExtraGCBRCombo) then
+						if	NPC.GetItem(Tinker.Hero, "item_glimmer_cape", true) ~= nil 
+							and Tinker.ManaPoint > Menu.GetValue(Tinker.ExtraGCTHCombo)
+						then
+							Tinker.Cast('item_glimmer_cape', Tinker.Hero, Tinker.Hero, nil, Tinker.ManaPoint)
+						end
+					end
 				end
 			end		
 		end
@@ -817,8 +929,8 @@ function Tinker.OnPrepareUnitOrders(orders)
 			
 			if Menu.IsEnabled(Tinker.ExtraBottleAly) and Ability.GetName(orders.ability) == 'item_travel_boots' and Tinker.Abilitys['item_bottle'] ~= nil then
 				local once = true
-				for k, v in pairs(Heroes.InRadius(Entity.GetAbsOrigin(Tinker.Hero), Ability.GetCastRange(Tinker.Abilitys['item_bottle']), Enum.TeamType.TEAM_FRIEND, Enum.TeamType.TEAM_FRIEND)) do
-					if once and v ~= Tinker.Hero and (Entity.GetHealth(v) < Entity.GetMaxHealth(v) or NPC.GetMana(v) < NPC.GetMaxMana(v)) then
+				for k, v in pairs(Heroes.InRadius(Entity.GetAbsOrigin(Tinker.Hero), Ability.GetCastRange(Tinker.Abilitys['item_bottle']))) do
+					if Entity.IsSameTeam(Tinker.Hero, v) and  once and v ~= Tinker.Hero and (Entity.GetHealth(v) < Entity.GetMaxHealth(v) or NPC.GetMana(v) < NPC.GetMaxMana(v)) then
 						Ability.CastTarget(Tinker.Abilitys['item_bottle'], v)
 						once = false
 					end
@@ -829,7 +941,7 @@ function Tinker.OnPrepareUnitOrders(orders)
 				local bott = NPC.GetItem(Tinker.Hero, "item_bottle", true)
 				if	bott ~= nil 
 					and Ability.IsCastable(bott, Tinker.ManaPoint)
-					and (Entity.GetHealth(Tinker.Hero) < Entity.GetMaxHealth(Tinker.Hero) or Tinker.ManaPoint < NPC.GetMaxMana(Tinker.Hero))
+					and (Entity.GetHealth(Tinker.Hero) < ((Entity.GetMaxHealth(Tinker.Hero) / 100) * Menu.GetValue(Tinker.ExtraBottleThr)) or Tinker.ManaPoint <  ((NPC.GetMaxMana(Tinker.Hero) / 100) * Menu.GetValue(Tinker.ExtraBottleThr)))
 					and not NPC.HasModifier(Tinker.Hero, "modifier_bottle_regeneration")
 				then
 					Ability.CastNoTarget(bott)
