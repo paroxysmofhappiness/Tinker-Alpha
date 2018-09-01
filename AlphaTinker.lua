@@ -1,6 +1,6 @@
 local Tinker = {}
 Tinker.IsEnabled		= Menu.AddOption({ "Hero Specific","Tinker" }, "Enabled", "")
-Tinker.Version			= Menu.AddOption({ "Hero Specific","Tinker" }, "Version - Alpha", "", 1,1,1)
+Tinker.Version			= Menu.AddOption({ "Hero Specific","Tinker" }, "Version", "", 1,1,1)
 Tinker.DMGCalculator	= Menu.AddOption({ "Hero Specific","Tinker", "Extra" }, "DMG Calculator", "", 1, 3)
 Tinker.KillIndicator	= Menu.AddOption({ "Hero Specific","Tinker", "Extra" }, "Kill Indicator", "")
 Tinker.RocketIndicator	= Menu.AddOption({ "Hero Specific","Tinker", "Extra" }, "Rocket indicator", "Draws particle for current targets")
