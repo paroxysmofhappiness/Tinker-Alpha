@@ -1028,7 +1028,7 @@ function CalculateTotalDMG()
 	Tinker.TotalManaCost = Tinker.TotalManaCost + Ability.GetManaCost(rocket)
 	Tinker.TotalManaCost = Tinker.TotalManaCost + Ability.GetManaCost(rearm)
 	
-	Tinker.TotalDamage = Tinker.TotalMagicDamage + Tinker.TotalPureDamage
+	Tinker.TotalDamage = (Tinker.TotalMagicDamage * Tinker.TotalMagicFactor) + (Tinker.TotalPureDamage * xfactor)
 end
 
 return Tinker
