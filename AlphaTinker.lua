@@ -12,24 +12,24 @@ Tinker.FullCastE		= Menu.AddOption({ "Hero Specific","Tinker", "Prepared combos"
 Tinker.FullCastK		= Menu.AddKeyOption({ "Hero Specific","Tinker", "Prepared combos", "Full cast" }, "Combo key", Enum.ButtonCode.KEY_F)
 
 Tinker.ExtraSoul		= Menu.AddOption({ "Hero Specific","Tinker", "Extra", "Items", "Soul Ring" }, "Soul Ring", "Cast Soul Ring before each ability")
-Tinker.ExtraSoulT		= Menu.AddOption({ "Hero Specific","Tinker", "Extra", "Items", "Soul Ring" }, "Soul Ring Threshold", "", 150, 800, 50)
+Tinker.ExtraSoulT		= Menu.AddOption({ "Hero Specific","Tinker", "Extra", "Items", "Soul Ring" }, "Soul Ring Threshold", "", 150, 1500, 50)
 Tinker.ExtraSoulCombo	= Menu.AddOption({ "Hero Specific","Tinker", "Extra", "Items", "Soul Ring" }, "Soul Ring in any combo", "")
 Tinker.ExtraBottle		= Menu.AddOption({ "Hero Specific","Tinker", "Extra", "Items", "Bottle" }, "Bottle", "Drink bottle on yourself before each ability")
 Tinker.ExtraBottleT		= Menu.AddOption({ "Hero Specific","Tinker", "Extra", "Items", "Bottle" }, "Bottle in any combo", "")
 Tinker.ExtraBottleAly	= Menu.AddOption({ "Hero Specific","Tinker", "Extra", "Items", "Bottle" }, "Bottle for aly before TP", "")
 Tinker.ExtraBottleFnt	= Menu.AddOption({ "Hero Specific","Tinker", "Extra", "Items", "Bottle" }, "Bottle self/aly on fountain", "")
-Tinker.ExtraBottleThr	= Menu.AddOption({ "Hero Specific","Tinker", "Extra", "Items", "Bottle" }, "Bottle Threshold", "Will only use Bootle when MP or HP is less then (%)", 10, 100, 2) --+
-Tinker.ExtraGhostCombo	= Menu.AddOption({ "Hero Specific","Tinker", "Extra", "Items", "Ghost scepter" }, "Ghost scepter in any combo", "") --+
-Tinker.ExtraGhostRearm	= Menu.AddOption({ "Hero Specific","Tinker", "Extra", "Items", "Ghost scepter" }, "Ghost scepter before ream", "") --+
-Tinker.ExtraGCCombo		= Menu.AddOption({ "Hero Specific","Tinker", "Extra", "Items", "Glimmer Cape" }, "Glimmer Cape in any combo", "") --+
-Tinker.ExtraGCTHCombo	= Menu.AddOption({ "Hero Specific","Tinker", "Extra", "Items", "Glimmer Cape" }, "Glimmer Cape MP Threshold", "", 150, 800, 50) --+
-Tinker.ExtraGCBRCombo	= Menu.AddOption({ "Hero Specific","Tinker", "Extra", "Items", "Glimmer Cape" }, "Glimmer Cape before ream", "") --+
+Tinker.ExtraBottleThr	= Menu.AddOption({ "Hero Specific","Tinker", "Extra", "Items", "Bottle" }, "Bottle Threshold", "Will only use Bootle when MP or HP is less then (%)", 10, 100, 2)
+Tinker.ExtraGhostCombo	= Menu.AddOption({ "Hero Specific","Tinker", "Extra", "Items", "Ghost scepter" }, "Ghost scepter in any combo", "")
+Tinker.ExtraGhostRearm	= Menu.AddOption({ "Hero Specific","Tinker", "Extra", "Items", "Ghost scepter" }, "Ghost scepter before ream", "")
+Tinker.ExtraGCCombo		= Menu.AddOption({ "Hero Specific","Tinker", "Extra", "Items", "Glimmer Cape" }, "Glimmer Cape in any combo", "")
+Tinker.ExtraGCTHCombo	= Menu.AddOption({ "Hero Specific","Tinker", "Extra", "Items", "Glimmer Cape" }, "Glimmer Cape MP Threshold", "", 150, 1000, 50)
+Tinker.ExtraGCBRCombo	= Menu.AddOption({ "Hero Specific","Tinker", "Extra", "Items", "Glimmer Cape" }, "Glimmer Cape before ream", "")
 
 Tinker.FailRearmAI		= Menu.AddOption({ "Hero Specific","Tinker", "Extra", "Fail Switch" }, "Fail Rearm - check abilities / items", "")
 Tinker.KillSteal		= Menu.AddOption({ "Hero Specific","Tinker", "Extra" }, "Steal Kill by Spells", "")
 Tinker.CastRange		= Menu.AddOption({ "Hero Specific","Tinker", "Globals" }, "Nearest to mouse", "", 50, 2000, 50)
 
-Menu.SetValueName(Tinker.Version, 1, "4.7")
+Menu.SetValueName(Tinker.Version, 1, "4.7.1")
 Menu.SetValueName(Tinker.DMGCalculator, 1, "Off")
 Menu.SetValueName(Tinker.DMGCalculator, 2, "Enabled - Bar")
 Menu.SetValueName(Tinker.DMGCalculator, 3, "Enabled - Mouse")
@@ -914,6 +914,8 @@ function Tinker.OnPrepareUnitOrders(orders)
 							Tinker.Cast('item_glimmer_cape', Tinker.Hero, Tinker.Hero, nil, Tinker.ManaPoint)
 						end
 					end
+					
+					Tinker.RearmCast = true
 				end
 			end		
 		end
@@ -1026,7 +1028,7 @@ function CalculateTotalDMG()
 	Tinker.TotalManaCost = Tinker.TotalManaCost + Ability.GetManaCost(rocket)
 	Tinker.TotalManaCost = Tinker.TotalManaCost + Ability.GetManaCost(rearm)
 	
-	Tinker.TotalDamage = (Tinker.TotalMagicDamage * Tinker.TotalMagicFactor) + (Tinker.TotalPureDamage * xfactor)
+	Tinker.TotalDamage = Tinker.TotalMagicDamage + Tinker.TotalPureDamage
 end
 
 return Tinker
